@@ -1,0 +1,13 @@
+/* Les variables globales */
+
+:root
+{
+    --main-color   : #007fff;
+    --dark-color   : #0000ff;
+    --light-main   : #3f7fff;
+
+    --light-color  : #888888;
+    --light-bg     : #eeeeee;
+
+    --dark-text    : #2c3e50;
+}

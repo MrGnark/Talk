@@ -1,0 +1,61 @@
+/* L'en tete de la page web */
+
+@import url( "global-vars.css" );
+
+header
+{
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    z-index: 1000;
+
+    background-color: white;
+    border-bottom: 0.1rem solid var( --light-color );
+
+    text-align: center;
+}
+
+header *
+{
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 1rem 1.5rem;
+}
+
+header p
+{
+    padding: 0px;
+    margin: 0px;
+}
+
+h1
+{
+    font-size: 5rem;
+}
+
+/* Media querries */
+
+@media ( max-width : 768px )
+{
+    header *
+    {
+        padding: 0.25rem 0.5rem;
+    }
+
+    h1
+    {
+        font-size: 3rem;
+    }
+}
+
+@media ( max-width : 425px )
+{
+    header *
+    {
+        padding: 0.125rem 0.25rem;
+    }
+}

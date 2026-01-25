@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>Talk !</title>
+
+        <link rel="stylesheet" href="/style/style.css"/>
+        <link rel="shortcut icon" href="/images/icon.png"/>
+    </head>
+    <body>
+        <header>
+            <p>
+                <img src="/images/icon.png" alt=""/>
+            </p>
+            <h1>Talk !</h1>
+        </header>
+
+        <div id="connection">
+            <input type="text" id="pseudo" placeholder="Votre pseudo"/> <br/>
+            <button id="connect" onclick="Connect();">Se connecter</button>
+        </div>
+
+        <div id="messages" class="hidden">
+            <!-- <div class="msg hidden">
+                <p>
+                    <img src="/images/user.png" alt=""/>
+                    <h2>Mr. Gnark</h2>
+                </p>
+                <hr/>
+                <p>
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                    Beatae dolores obcaecati facilis nam incidunt atque,
+                    doloribus libero dolorem suscipit placeat maxime,
+                    natus ut quisquam modi quos! Esse quos facilis assumenda?
+                </p>
+            </div> -->
+        </div>
+
+        <footer>
+            <p id="c-pseudo"></p>
+            <input type="text" placeholder="Votre message" id="msg"/>
+            <button id="submit" onclick="Send();">Envoyer</button>
+        </footer>
+
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="/scripts/jquery.js"></script>
+        <script>
+            var socket    = null;
+            var msg_zone  = document.getElementById( "messages" );
+            var connected = false;
+
+            function Connect()
+            {
+                if( $( "#pseudo" ).val() === "" )
+                {
+                    alert( "Veuillez renseigner un pseudo !" );
+                    $( "#pseudo" ).focus();
+                    return;
+                }
+
+                socket = new io();
+                    socket.on( "id state", NotifyIdState );
+                socket.emit( "user id", $( "#pseudo" ).val() );
+            }
+
+            function NotifyIdState( usr )
+            {
+                if( usr !== $( "#pseudo" ).val() )
+                {
+                    alert( `${usr} vient de se connecter` );
+                    $( "#msg" ).focus();
+                    return ;
+                }
+
+                if( connected === true )
+                {
+                    return ;
+                }
+
+                connected = true;
+
+                socket.on( "message", ShowMessage );
+
+                $( "#connection" ).addClass( "hidden" );
+                $( "#messages" ).removeClass( "hidden" );
+
+                alert( "Bienvenue, " + $( "#pseudo" ).val() );
+                $( "#c-pseudo" ).text( ( "Votre pseudo est " + $( "#pseudo" ).val() ) );
+                $( "#msg" ).focus();
+            }
+
+            function Send()
+            {
+                if( socket == null )
+                {
+                    alert( "Veuillez vous connecter d'abord !" );
+                    $( "#pseudo" ).focus();
+                    return ;
+                }
+
+                if( $( "#msg" ).val() === "" )
+                {
+                    $( "#msg" ).focus();
+                    return ;
+                }
+
+                socket.emit( "message", {
+                    usr : $( "#pseudo" ).val(),
+                    msg : $( "#msg" ).val()
+                } );
+                $( "#msg" ).val( "" );
+                $( "#msg" ).focus();
+            }
+
+            function ShowMessage( msg )
+            {
+                var container = document.createElement( "div" );
+                    container.classList.add( "msg" );
+                var title = document.createElement( "p" );
+                {
+                    var img = document.createElement( "img" );
+                        img.src = "/images/user.png";
+                    var usr = document.createElement( "h2" );
+                        usr.innerText = msg.usr;
+                    title.appendChild( img );
+                    title.appendChild( usr );
+                }
+
+                container.appendChild( title );
+                
+                container.appendChild( document.createElement( "hr" ) );
+
+                var text = document.createElement( "p" );
+                    text.innerText = msg.msg;
+                    container.appendChild( text );
+
+                msg_zone.appendChild( container );
+                container.scrollIntoView( { behavior : "smooth" } );
+                msg_text.focus();
+            }
+        </script>
+    </body>
+</html>

@@ -1,0 +1,72 @@
+/* La zone d'affichage des messages */
+
+@import url( "global-vars.css" );
+
+#messages
+{
+    position: absolute;
+    display: block;
+
+    top: 15rem;
+
+    width: 50%;
+
+    padding: 1rem;
+
+    margin-left: 25%;
+    padding-bottom: 10rem;
+
+    border-radius: 1rem;
+
+    background-color: white;
+}
+
+.msg
+{
+    display: block;
+
+    margin: 1rem;
+
+    border-radius: 1rem;
+
+    padding: 1rem;
+
+    text-align: justify;
+
+    background-color: var( --light-bg );
+}
+
+.msg img
+{
+    float: left;
+}
+
+.msg p
+{
+    margin-bottom: 1rem;
+}
+
+.msg hr
+{
+    clear: both;
+
+    margin: 1rem 0px;
+
+    height: 0.1rem;
+
+    background-color: var( --light-color );
+}
+
+/* Media querries */
+@media ( max-width : 768px )
+{
+    #messages
+    {
+        top: 10rem;
+
+        margin-left: 10%;
+        padding-bottom: 15rem;
+
+        width: 75%;
+    }
+}

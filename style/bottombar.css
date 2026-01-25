@@ -1,0 +1,87 @@
+/* La barre d'envoi des messages */
+
+@import url( "global-vars.css" );
+
+footer
+{
+    position : fixed;
+
+    bottom : 0px;
+    right  : 0px;
+    left   : 0px;
+
+    background-color: white;
+
+    border-top: 0.1rem solid var( --light-color );
+
+    text-align: center;
+    color: var( --dark-text );
+}
+
+footer *
+{
+    margin: 1rem;
+}
+
+footer input
+{
+    width: 40%;
+    height: 3rem;
+
+    margin-right: 0px;
+
+    border-radius: 100rem 0px 0px 100rem;
+
+    background-color: var( --light-bg );
+}
+
+#submit
+{
+    width: 10%;
+    height: 3rem;
+
+    margin-left: 0px;
+
+    border-radius: 0px 100rem 100rem 0px;
+}
+
+/* Media querries */
+
+@media ( max-width : 768px )
+{
+    footer
+    {
+        margin-bottom: 0px;
+
+        padding-bottom: 1rem;
+    }
+
+    footer input
+    {
+        display: block;
+
+        margin: auto;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+
+        width: 90%;
+        height: 3rem;
+
+        border-radius: 100rem 100rem;
+
+        background-color: var( --light-bg );
+    }
+
+    #submit
+    {
+        display: block;
+
+        margin: auto;
+        margin-bottom: 1rem;
+
+        width: 90%;
+        height: 3rem;
+
+        border-radius: 100rem 100rem 100rem 100rem;
+    }
+}
