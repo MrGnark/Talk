@@ -9,106 +9,284 @@
         <link rel="shortcut icon" href="/images/icon.png"/>
     </head>
     <body>
-        <header>
+        <header id="head" class="hidden">
             <p>
                 <img src="/images/icon.png" alt=""/>
             </p>
             <h1>Talk !</h1>
         </header>
 
-        <div id="connection">
-            <input type="text" id="pseudo" placeholder="Votre pseudo"/> <br/>
+        <div id="bubble">
+            <button id="show">+</button>
+            <div id="info" class="hidden">
+                <p>
+                    Nom : Talk ! <br/>
+                    Auteur : Mr. Gnark <br/>
+                    Description : Un forum simpliste en temps réel <br/>
+                    <a href="#">Dépôt GitHub</a>
+                </p>
+            </div>
+        </div>
+
+        <div id="question">
+            <button id="AcIns">S'inscrire</button> <br/>
+            <button id="AcCon">Se connecter</button>
+        </div>
+
+        <div id="inscription" class="hidden">
+            <input type="text" id="i-pseudo" placeholder="Votre pseudo"/> <br/>
+            <input type="password" id="i-code" placeholder="Votre mot de passe"/> <br/>
+            <button id="connect" onclick="Register();">S'inscrire</button>
+            <button id="i-back">Retour</button>
+        </div>
+
+        <div id="connection" class="hidden">
+            <input type="text" id="c-pseudo" placeholder="Votre pseudo"/> <br/>
+            <input type="password" id="c-code" placeholder="Votre mot de passe"/> <br/>
             <button id="connect" onclick="Connect();">Se connecter</button>
+            <button id="c-back">Retour</button>
         </div>
 
-        <div id="messages" class="hidden">
-            <!-- <div class="msg hidden">
-                <p>
-                    <img src="/images/user.png" alt=""/>
-                    <h2>Mr. Gnark</h2>
-                </p>
-                <hr/>
-                <p>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Beatae dolores obcaecati facilis nam incidunt atque,
-                    doloribus libero dolorem suscipit placeat maxime,
-                    natus ut quisquam modi quos! Esse quos facilis assumenda?
-                </p>
-            </div> -->
-        </div>
+        <div id="messages" class="hidden"></div>
 
-        <footer>
-            <p id="c-pseudo"></p>
+        <footer id="foot" class="hidden">
+            <p id="m-pseudo"></p>
             <input type="text" placeholder="Votre message" id="msg"/>
-            <button id="submit" onclick="Send();">Envoyer</button>
+            <button id="send" onclick="Send();">Envoyer</button>
         </footer>
 
         <script src="/socket.io/socket.io.js"></script>
         <script src="/scripts/jquery.js"></script>
         <script>
+            document.onscroll = () => {
+                document.querySelector( "#info" ).classList.add( "hidden" );
+                document.querySelector( "#show" ).innerText = "+";
+            };
             var socket    = null;
-            var msg_zone  = document.getElementById( "messages" );
             var connected = false;
+            var msg_zone  = document.getElementById( "messages" );
+            var pseudo    = "";
+            var info = false;
 
-            function Connect()
+            $( "#show" ).click( () => {
+                if( !info )
+                {
+                    $( "#show" ).text( "-" );
+                    $( "#info" ).removeClass( "hidden" );
+                    info = true;
+                }
+                else
+                {
+                    $( "#show" ).text( "+" );
+                    $( "#info" ).addClass( "hidden" );
+                    info = false;
+                }
+            } );
+
+            $( "#AcIns" ).click( () => {
+                $( "#question" ).addClass( "hidden" );
+                $( "#inscription" ).removeClass( "hidden" );
+                $( "#i-pseudo" ).focus();
+            } );
+
+            $( "#i-back" ).click( () => {
+                $( "#inscription" ).addClass( "hidden" );
+                $( "#question" ).removeClass( "hidden" );
+            } );
+
+            $( "#AcCon" ).click( () => {
+                $( "#question" ).addClass( "hidden" );
+                $( "#connection" ).removeClass( "hidden" );
+                $( "#c-pseudo" ).focus();
+            } );
+
+            $( "#c-back" ).click( () => {
+                $( "#connection" ).addClass( "hidden" );
+                $( "#question" ).removeClass( "hidden" );
+            } );
+
+            $( "#send" ).click( Send );
+
+            function Register()
             {
-                if( $( "#pseudo" ).val() === "" )
+                if( $( "#i-pseudo" ).val() === "" )
                 {
                     alert( "Veuillez renseigner un pseudo !" );
-                    $( "#pseudo" ).focus();
+                    $( "#i-pseudo" ).focus();
                     return;
                 }
 
-                socket = new io();
-                    socket.on( "id state", NotifyIdState );
-                socket.emit( "user id", $( "#pseudo" ).val() );
+                if( $( "#i-code" ).val() === "" )
+                {
+                    alert( "Veuillez renseigner un mot de passe !" );
+                    $( "#i-code" ).focus();
+                    return;
+                }
+
+                if( socket === null )
+                {
+                    socket = new io;
+                    socket.on( "register_state", NotifyInscriptionState );
+                }
+
+                socket.emit( "usr_register", {
+                    usr  : $( "#i-pseudo" ).val(),
+                    code : $( "#i-code" ).val()
+                } );
             }
 
-            function NotifyIdState( usr )
+            function NotifyInscriptionState( state )
             {
-                if( usr !== $( "#pseudo" ).val() )
+                if( state.usr.toUpperCase() !== String( $( "#i-pseudo" ).val() ).toUpperCase() )
                 {
-                    alert( `${usr} vient de se connecter` );
+                    if( !connected )
+                    {
+                        return ;
+                    }
+
+                    if( state.status === "done" )
+                    {
+                        alert( `${state.usr} vient de se connecter.` );
+                        return ;
+                    }
+                }
+
+                if( connected )
+                {
+                    return ;
+                }
+
+                if( state.status === "done" )
+                {
+                    pseudo = $( "#i-pseudo" ).val();
+                    connected = true;
+                    alert( `Bienvenue, ${$( "#i-pseudo" ).val()} !` );
+                    socket.on( "message", ShowMessage );
+                    socket.on( "connected", NotifyUserConnection );
+                    $( "#inscription" ).addClass( "hidden" );
+                    $( "#head" ).removeClass( "hidden" );
+                    $( "#messages" ).removeClass( "hidden" );
+                    $( "#m-pseudo" ).text( `Votre pseudo est ${$( "#i-pseudo" ).val()}` );
+                    $( "#foot" ).removeClass( "hidden" );
                     $( "#msg" ).focus();
-                    return ;
+                }
+                else if( state.status === "existing_usr" )
+                {
+                    alert( "Ce pseudo existe déjà. Essayez en un autre ou connectez vous à ce compte." );
+                    delete io;
+                    $( "#i-pseudo" ).focus();
+                }
+                else if( state.status === "fatal_error" )
+                {
+                    alert( "Une erreur inconnue s'est produite. Ressayez" );
+                    delete io;
+                }
+            }
+
+            function Connect()
+            {
+                if( $( "#c-pseudo" ).val() === "" )
+                {
+                    alert( "Veuillez donner le pseudo !" );
+                    $( "#c-pseudo" ).focus();
+                    return;
+                }
+                if( $( "#c-code" ).val() === "" )
+                {
+                    alert( "Veuillez donner le mot de passe !" );
+                    $( "#c-code" ).focus();
+                    return;
                 }
 
-                if( connected === true )
+                if( socket === null )
+                {
+                    socket = new io;
+                    socket.on( "connect_state", NotifyConnectionState );
+                }
+
+                socket.emit( "usr_connect", {
+                    usr  : $( "#c-pseudo" ).val(),
+                    code : $( "#c-code" ).val()
+                } );
+            }
+
+            function NotifyConnectionState( state )
+            {
+                if( state.usr.toUpperCase() !== String( $( "#c-pseudo" ).val() ).toUpperCase() )
+                {
+                    if( !connected )
+                    {
+                        return ;
+                    }
+
+                    if( state.status === "done" )
+                    {
+                        alert( `${state.usr} vient de se connecter.` );
+                        return ;
+                    }
+                }
+
+                if( connected )
                 {
                     return ;
                 }
 
-                connected = true;
+                if( state.status === "done" )
+                {
+                    pseudo = $( "#c-pseudo" ).val();
+                    connected = true;
+                    alert( `Bon retour, ${$( "#c-pseudo" ).val()} !` );
+                    socket.on( "message", ShowMessage );
+                    socket.on( "connected", NotifyUserConnection );
+                    $( "#inscription" ).addClass( "hidden" );
+                    $( "#head" ).removeClass( "hidden" );
+                    $( "#connection" ).addClass( "hidden" );
+                    $( "#messages" ).removeClass( "hidden" );
+                    $( "#m-pseudo" ).text( `Votre pseudo est ${$( "#c-pseudo" ).val()}` );
+                    $( "#foot" ).removeClass( "hidden" );
+                    $( "#msg" ).focus();
+                }
+                else if( state.status === "unknown_usr" )
+                {
+                    alert( "Cet utilisateur n'existe pas. Vérifiez que vous l'avez bien écrit ou essayez de créer un compte" );
+                    delete socket;
+                    $( "#c-pseudo" ).focus();
+                }
+                else if( state.status === "wrong_code" )
+                {
+                    alert( "Ce mot de passe est erroné. Vérifiez que vous l'avez bien écrit et réessayez" );
+                    delete socket;
+                    $( "#c-code" ).focus();
+                }
+                else if( state.status === "fatal_error" )
+                {
+                    alert( "Une erreur inconue s'est produite. Réessayez" );
+                    delete socket;
+                    $( "#c-pseudo" ).focus();
+                }
+            }
 
-                socket.on( "message", ShowMessage );
-
-                $( "#connection" ).addClass( "hidden" );
-                $( "#messages" ).removeClass( "hidden" );
-
-                alert( "Bienvenue, " + $( "#pseudo" ).val() );
-                $( "#c-pseudo" ).text( ( "Votre pseudo est " + $( "#pseudo" ).val() ) );
-                $( "#msg" ).focus();
+            function NotifyUserConnection( usr )
+            {
+                if( usr !== pseudo )
+                {
+                    alert( `${usr} vient de se connecter.` );
+                }
             }
 
             function Send()
             {
-                if( socket == null )
-                {
-                    alert( "Veuillez vous connecter d'abord !" );
-                    $( "#pseudo" ).focus();
-                    return ;
-                }
-
                 if( $( "#msg" ).val() === "" )
                 {
                     $( "#msg" ).focus();
                     return ;
                 }
 
-                socket.emit( "message", {
-                    usr : $( "#pseudo" ).val(),
+                socket.emit( "usr_msg", {
+                    usr : pseudo,
                     msg : $( "#msg" ).val()
                 } );
+
                 $( "#msg" ).val( "" );
                 $( "#msg" ).focus();
             }
@@ -137,7 +315,7 @@
 
                 msg_zone.appendChild( container );
                 container.scrollIntoView( { behavior : "smooth" } );
-                msg_text.focus();
+                $( "#msg" ).focus();
             }
         </script>
     </body>

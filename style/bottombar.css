@@ -16,6 +16,8 @@ footer
 
     text-align: center;
     color: var( --dark-text );
+
+    transform-origin : top middle;
 }
 
 footer *
@@ -29,20 +31,16 @@ footer input
     height: 3rem;
 
     margin-right: 0px;
-
-    border-radius: 100rem 0px 0px 100rem;
-
-    background-color: var( --light-bg );
 }
 
-#submit
+#send
 {
     width: 10%;
     height: 3rem;
 
     margin-left: 0px;
 
-    border-radius: 0px 100rem 100rem 0px;
+    border-radius: 0px 0.5rem 0.5rem 0px;
 }
 
 /* Media querries */
@@ -66,13 +64,9 @@ footer input
 
         width: 90%;
         height: 3rem;
-
-        border-radius: 100rem 100rem;
-
-        background-color: var( --light-bg );
     }
 
-    #submit
+    #send
     {
         display: block;
 
@@ -82,6 +76,6 @@ footer input
         width: 90%;
         height: 3rem;
 
-        border-radius: 100rem 100rem 100rem 100rem;
+        border-radius: 0.5rem;
     }
 }

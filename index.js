@@ -13,17 +13,19 @@ app.use( "/scripts", express.static( "scripts" ) );
 app.get( "/", chat.SendHomePage );
 
 io.on( "connection", ( socket ) => {
-    console.log( "New connection." );
-
-    socket.on( "user id", ( id ) => {
-        io.emit( "id state", id );
+    socket.on( "usr_register", async ( id ) => {
+        await chat.RegisterUser( io, socket, id );
     } );
 
-    socket.on( "message", ( msg ) => {
-        io.emit( "message", msg );
+    socket.on( "usr_connect", async ( id ) => {
+        await chat.ConnectUser( io, socket, id );
+    } );
+
+    socket.on( "usr_msg", ( msg ) => {
+        chat.SendMessage( io, msg )
     } );
 } );
 
-server.listen( port, () => { console.log( `\tServer started successfully\n\tLooking on port ${port}` ) } );
+server.listen( port, () => { console.log( `Server started successfully; listening on port ${port}.` ) } );
 
 //

@@ -1,7 +1,10 @@
 /* Le style global */
 
-@import url( "topbar.css" );
+@import url( "question.css" );
+@import url( "register.css" );
 @import url( "connect.css" );
+@import url( "topbar.css" );
+@import url( "info.css" );
 @import url( "middle-area.css" );
 @import url( "bottombar.css" );
 
@@ -27,6 +30,8 @@ body
     text-decoration : none;
 
     color: var( --dark-text );
+
+    transition: 0.25s linear;
 }
 
 *::selection
@@ -77,21 +82,25 @@ body
     background-color: var( --light-color );
 }
 
-div
+a
 {
-    transition: 0.25s linear;
+    color: #007fff;
+}
+
+a:hover
+{
+    text-decoration: underline;
+    color: #0000ff;
 }
 
 .hidden
 {
+    display: none;
     transform: scale( 0 );
 }
 
 button, input
 {
-    border-radius: 100rem 100rem;
-    background-color: var( --light-bg );
-
     text-align: center;
     font-size : 1.25rem;
 
@@ -100,18 +109,26 @@ button, input
 
 input
 {
-    background-color: var( --light-bg );
+    border-bottom: 0.2rem solid var(  --light-color );
+}
+
+input:hover, input:focus
+{
+    background-color : var( --light-bg );
 }
 
 button
 {
-    transition: 0.25s linear;
+    border-radius: 0.5rem;
+
     background-color: var( --main-color );
-    color: var( --light-bg );
+
+    color: white;
+
+    transition: 0.25s linear;
 }
 
 button:hover
 {
     background-color: var( --dark-color );
-    color: white;
 }

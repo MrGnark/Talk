@@ -1,0 +1,45 @@
+/* Le fenêtre d'inscription */
+
+@import url( "global-vars.css" );
+
+#inscription
+{
+    position : absolute;
+    display  : block;
+
+    margin-top  : 10%;
+    margin-left : 25%;
+
+    width  : 50%;
+    height : 60%;
+
+    border-radius: 0.5rem;
+
+    background-color : white;
+
+    box-shadow: var( --shadow-box );
+}
+
+#inscription *
+{
+    display: block;
+
+    margin-top  : 2rem;
+    margin-left : 10%;
+
+    width: 80%;
+    height: 3rem;
+}
+
+    /* Media querries */
+@media ( max-width : 768px )
+{
+    #inscription
+    {
+        margin-top  : 15%;
+        margin-left : 15%;
+
+        width  : 70%;
+        height : 70%;
+    }
+}

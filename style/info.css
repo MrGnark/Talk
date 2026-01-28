@@ -1,0 +1,60 @@
+@import url( "global-vars.css" );
+
+#bubble
+{
+    position: fixed;
+    display: block;
+
+    margin-top  : 13rem;
+    margin-left : 1rem;
+    z-index: 1500;
+
+    min-width: 5rem;
+    max-width : 40%;
+
+    border-radius: 0.5rem;
+
+    background-color: white;
+
+    box-shadow: var( --shadow-box );
+}
+
+#bubble *
+{
+    margin : 1rem;
+}
+
+#show
+{
+    width  : 3rem;
+    height : 3rem;
+
+    align-items: center;
+
+    font-size   : 3rem;
+    font-weight : bold;
+}
+
+#info
+{
+    transform-origin: top left;
+}
+
+    /* Media querries */
+@media ( max-width : 768px )
+{
+    #bubble
+    {
+        margin-top : 10rem;
+    }
+}
+
+@media ( max-width : 425px )
+{
+    #bubble
+    {
+        max-width : 70%;
+
+        margin-top: 95%;
+    }
+}
